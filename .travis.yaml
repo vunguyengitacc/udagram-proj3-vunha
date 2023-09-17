@@ -1,21 +1,30 @@
-language: minimal
+language: node_js
+node_js:
+- 16
 
-services: docker
-
-env:
-  - DOCKER_COMPOSE_VERSION=1.23.2
-
-before_install:
-  - docker -v && docker-compose -v
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-  - chmod +x ./kubectl
-  - sudo mv ./kubectl /usr/local/bin/kubectl
-
-
+services:
+- docker
 
 install:
-  - docker-compose -f docker-compose-build.yaml build --parallel
+- echo "nothing needs to be installed"
+
+before_script:
+- echo "no tests"
+
+script:
+- docker build -t udagram-reverseproxy ./udagram-reverseproxy
+- docker build -t udagram-api-feed ./udagram-api-feed
+- docker build -t udagram-api-user ./udagram-api-user
+- docker build -t udagram-frontend ./udagram-frontend
+# Tagging
+- docker tag udagram-reverseproxy nguyenvudockeracc/udagram-reverseproxy
+- docker tag udagram-api-feed nguyenvudockeracc/udagram-api-feed
+- docker tag udagram-api-user nguyenvudockeracc/udagram-api-user
+- docker tag udagram-frontend:local nguyenvudockeracc/udagram-frontend
+# Tasks to perform after the process is successful.
+after_success:
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- docker push nguyenvudockeracc/udagram-reverseproxy
+- docker push nguyenvudockeracc/udagram-api-feed
+- docker push nguyenvudockeracc/udagram-api-user
+- docker push nguyenvudockeracc/udagram-frontend
