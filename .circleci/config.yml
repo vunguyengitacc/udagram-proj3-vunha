@@ -20,9 +20,9 @@ jobs:
   push:
     steps:      
       - run: docker push nguyenvudockeracc/udagram-reverseproxy
-      -run: docker push nguyenvudockeracc/udagram-api-feed
-      -run: docker push nguyenvudockeracc/udagram-api-user
-      -run: docker push nguyenvudockeracc/udagram-frontend
+      - run: docker push nguyenvudockeracc/udagram-api-feed
+      - run: docker push nguyenvudockeracc/udagram-api-user
+      - run: docker push nguyenvudockeracc/udagram-frontend
 
 # Orchestrate our job run sequence
 workflows:
