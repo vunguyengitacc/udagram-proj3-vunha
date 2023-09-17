@@ -1,0 +1,30 @@
+version: 2.1
+
+# Define the jobs we want to run for this project
+jobs:
+  build:
+    steps:  
+      - run: docker build -t udagram-reverseproxy ./udagram-reverseproxy
+      - run: docker build -t udagram-api-feed ./udagram-api-feed
+      - run: docker build -t udagram-api-user ./udagram-api-user
+      - run: docker build -t udagram-frontend ./udagram-frontend
+  tagging:
+    steps:
+      - run: docker tag udagram-reverseproxy nguyenvudockeracc/udagram-reverseproxy
+      - run: docker tag udagram-api-feed nguyenvudockeracc/udagram-api-feed
+      - run: docker tag udagram-api-user nguyenvudockeracc/udagram-api-user
+      - run: docker tag udagram-frontend:local nguyenvudockeracc/udagram-frontend
+  push:
+    steps:      
+      - run: docker push nguyenvudockeracc/udagram-reverseproxy
+      -run: docker push nguyenvudockeracc/udagram-api-feed
+      -run: docker push nguyenvudockeracc/udagram-api-user
+      -run: docker push nguyenvudockeracc/udagram-frontend
+
+# Orchestrate our job run sequence
+workflows:
+  build:
+    jobs:
+      - build
+      - tagging
+      - push
