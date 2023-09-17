@@ -2,6 +2,9 @@ version: 2.1
 
 # Define the jobs we want to run for this project
 jobs:
+  login:
+    steps:  
+      - run: docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD docker.io
   build:
     steps:  
       - run: docker build -t udagram-reverseproxy ./udagram-reverseproxy
@@ -25,6 +28,7 @@ jobs:
 workflows:
   build:
     jobs:
+      - login
       - build
       - tagging
       - push
