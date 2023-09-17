@@ -7,10 +7,7 @@ jobs:
       - run: docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD docker.io
   build:
     steps:  
-      - run: docker build -t udagram-reverseproxy ./udagram-reverseproxy
-      - run: docker build -t udagram-api-feed ./udagram-api-feed
-      - run: docker build -t udagram-api-user ./udagram-api-user
-      - run: docker build -t udagram-frontend ./udagram-frontend
+      - run: docker-compose -f ./docker-compose-build.yaml build --parallel
   tagging:
     steps:
       - run: docker tag udagram-reverseproxy nguyenvudockeracc/udagram-reverseproxy
