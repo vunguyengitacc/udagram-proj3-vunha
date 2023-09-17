@@ -1,46 +1,21 @@
+# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
 
+# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
+# See: https://circleci.com/docs/orb-intro/
 orbs:
   node: circleci/node@4.7
 
-jobs:
-  build:
-    docker:
-      - image: "circleci/node:10.16.0"
-    steps:
-      - checkout
-      - run:
-          name: Install `docker-compose`
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - setup_remote_docker:
-          docker_layer_caching: false 
-      - run:
-          name: Build using `docker-compose`
-          command: |
-            docker-compose -f docker-compose-build.yaml build --parallel
-      - run:
-          name: Login for Docker Hub
-          command: | 
-            echo "$DOCKERHUB_PASSWORD" | docker login --username $DOCKERHUB_USERNAME --password-stdin
-      - run:
-          name: Tagging
-          command: |
-            docker tag udagram-reverseproxy nguyenvudockeracc/udagram-reverseproxy
-            docker tag udagram-api-feed nguyenvudockeracc/udagram-api-feed
-            docker tag udagram-api-user nguyenvudockeracc/udagram-api-user
-            docker tag udagram-frontend:local nguyenvudockeracc/udagram-frontend
-      - run:
-          name: Push to Docker Hub
-          command: |
-            docker push nguyenvudockeracc/udagram-reverseproxy
-            docker push nguyenvudockeracc/udagram-api-feed
-            docker push nguyenvudockeracc/udagram-api-user
-            docker push nguyenvudockeracc/udagram-frontend
-
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  build:
+  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build
+      - node/test:
+          # This is the node version to use for the `cimg/node` tag
+          # Relevant tags can be found on the CircleCI Developer Hub
+          # https://circleci.com/developer/images/image/cimg/node
+          version: '16.10'
+          # If you are using yarn, change the line below from "npm" to "yarn"
+          pkg-manager: npm
