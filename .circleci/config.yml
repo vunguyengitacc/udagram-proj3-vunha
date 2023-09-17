@@ -35,3 +35,8 @@ jobs:
             docker push nguyenvudockeracc/udagram-api-feed
             docker push nguyenvudockeracc/udagram-api-user
             docker push nguyenvudockeracc/udagram-frontend
+
+workflows:
+  build:
+    jobs:
+      - build
